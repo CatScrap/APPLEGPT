@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AppleGPT - On-Device AI Chat</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #0a0a12 0%, #0f0a1a 50%, #0a0a12 100%);
+      color: #e0e0e0;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    header {
+      text-align: center;
+      padding: 40px 0;
+    }
+    
+    .logo-image {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 20px;
+      display: block;
+      border-radius: 25px;
+      box-shadow: 0 10px 30px rgba(147, 51, 234, 0.3);
+      transition: transform 0.3s ease;
+    }
+    
+    .logo-image:hover {
+      transform: scale(1.05);
+    }
+    
+    .logo {
+      font-size: 48px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      background: linear-gradient(45deg, #A855F7, #6366F1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 10px rgba(147, 51, 234, 0.3);
+    }
+    
+    .tagline {
+      font-size: 20px;
+      color: #9988aa;
+      margin-bottom: 30px;
+    }
+    
+    .features {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+    
+    .feature {
+      background: rgba(20, 15, 30, 0.8);
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      border-left: 4px solid #A855F7;
+      backdrop-filter: blur(10px);
+    }
+    
+    .feature-icon {
+      font-size: 24px;
+      min-width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #A855F7, #6366F1);
+      color: #0a0a12;
+      border-radius: 50%;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(147, 51, 234, 0.4);
+    }
+    
+    .feature-content h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 20px;
+      color: #A855F7;
+    }
+    
+    .feature-content p {
+      margin: 0;
+      color: #b0a0c0;
+    }
+    
+    .highlight-section {
+      position: relative;
+      margin: 60px 0;
+      padding: 40px 25px;
+      background: rgba(20, 15, 30, 0.9);
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 40px rgba(147, 51, 234, 0.1);
+      overflow: hidden;
+      border: 2px solid #6366F1;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23A855F7' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    
+    .dashed-border-top {
+      height: 2px;
+      background-image: linear-gradient(to right, #A855F7 50%, transparent 50%);
+      background-size: 20px 100%;
+      margin-bottom: 20px;
+    }
+    
+    .dashed-border-bottom {
+      height: 2px;
+      background-image: linear-gradient(to right, #6366F1 50%, transparent 50%);
+      background-size: 20px 100%;
+      margin-top: 20px;
+    }
+    
+    .highlight-title {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      background: linear-gradient(45deg, #A855F7, #6366F1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .highlight-section p {
+      color: #b0a0c0;
+    }
+    
+    .cta {
+      text-align: center;
+      margin: 40px 0;
+    }
+    
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(45deg, #A855F7, #6366F1);
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: bold;
+      padding: 15px 30px;
+      border-radius: 8px;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(147, 51, 234, 0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: none;
+    }
+    
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(147, 51, 234, 0.5);
+    }
+    
+    .legal-section {
+      background: rgba(20, 15, 30, 0.9);
+      border-radius: 12px;
+      padding: 40px;
+      margin: 60px 0;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(147, 51, 234, 0.2);
+    }
+    
+    .legal-section h2 {
+      color: #A855F7;
+      font-size: 32px;
+      margin-bottom: 10px;
+      border-bottom: 3px solid #A855F7;
+      padding-bottom: 10px;
+    }
+    
+    .legal-section h3 {
+      color: #A855F7;
+      font-size: 24px;
+      margin-top: 30px;
+      margin-bottom: 15px;
+    }
+    
+    .legal-section h4 {
+      color: #6366F1;
+      font-size: 18px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+    
+    .legal-section p {
+      margin-bottom: 15px;
+      color: #d0c0d5;
+    }
+    
+    .legal-section ul {
+      margin-left: 25px;
+      margin-bottom: 15px;
+    }
+    
+    .legal-section li {
+      margin-bottom: 8px;
+      color: #b0a0b5;
+    }
+    
+    .warning-box {
+      background: rgba(255, 193, 7, 0.1);
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    
+    .warning-box p, .warning-box li {
+      color: #ffe082;
+    }
+    
+    .danger-box {
+      background: rgba(220, 53, 69, 0.1);
+      border-left: 4px solid #dc3545;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    
+    .danger-box p, .danger-box li {
+      color: #f5a0a7;
+    }
+    
+    .info-box {
+      background: rgba(147, 51, 234, 0.1);
+      border-left: 4px solid #A855F7;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    
+    .info-box p, .info-box li {
+      color: #d0b0f5;
+    }
+    
+    footer {
+      text-align: center;
+      padding: 30px 0;
+      color: #A855F7;
+      font-size: 14px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    
+    .floating {
+      position: absolute;
+      animation: floating 3s ease-in-out infinite, swaying 5s ease-in-out infinite;
+      opacity: 0.8;
+      font-size: 24px;
+      z-index: 1;
+      filter: drop-shadow(0 2px 5px rgba(147, 51, 234, 0.5));
+    }
+    
+    @keyframes floating {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    @keyframes swaying {
+      0% { margin-left: 0px; }
+      50% { margin-left: 15px; }
+      100% { margin-left: 0px; }
+    }
+    
+    #emoji1 { top: 30%; left: 15%; animation-delay: 0s; }
+    #emoji2 { top: 50%; left: 30%; animation-delay: 0.5s; }
+    #emoji3 { top: 40%; left: 50%; animation-delay: 1s; }
+    #emoji4 { top: 30%; left: 70%; animation-delay: 1.5s; }
+    #emoji5 { top: 50%; left: 85%; animation-delay: 2s; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="pj1.png" alt="AppleGPT Logo" class="logo-image">
+      <div class="logo">AppleGPT</div>
+      <p class="tagline">On-Device AI Chat</p>
+    </header>
+    
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">✨</div>
+        <div class="feature-content">
+          <h3>Private On-Device AI</h3>
+          <p>Powered by Apple's Foundation Models. Your conversations stay on your device, never sent to external servers.</p>
+        </div>
+      </div>
+      
+      <div class="feature">
+        <div class="feature-icon">☁️</div>
+        <div class="feature-content">
+          <h3>Cloud Sync (Premium)</h3>
+          <p>Access your chat history across all your devices with secure cloud synchronization for premium members.</p>
+        </div>
+      </div>
+      
+      <div class="feature">
+        <div class="feature-icon">🚀</div>
+        <div class="feature-content">
+          <h3>Fast & Intelligent</h3>
+          <p>Get instant, thoughtful responses powered by Apple Intelligence. No waiting for server responses.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="highlight-section">
+      <div class="dashed-border-top"></div>
+      <div class="floating" id="emoji1">💡</div>
+      <div class="floating" id="emoji2">🎯</div>
+      <div class="floating" id="emoji3">⚡</div>
+      <div class="floating" id="emoji4">🧠</div>
+      <div class="floating" id="emoji5">💬</div>
+      
+      <h2 class="highlight-title">AI That Respects Your Privacy</h2>
+      <p>Experience the power of Apple Intelligence in a beautiful, intuitive chat interface. Your data stays yours, processed entirely on your device.</p>
+      <div class="dashed-border-bottom"></div>
+    </div>
+    
+    <div class="cta">
+      <a href="#" class="cta-button">Download AppleGPT</a>
+    </div>
+
+    <div class="legal-section" id="privacy">
+      <h2>Privacy Policy</h2>
+      <p><em>Last Updated: January 8, 2026</em></p>
+
+      <h3>1. Introduction</h3>
+      <p>AppleGPT ("we," "us," or "our") operates the AppleGPT mobile application (the "App"). This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our App.</p>
+      <p>By using AppleGPT, you agree to the collection and use of information in accordance with this policy.</p>
+
+      <h3>2. Information We Collect</h3>
+      
+      <h4>2.1 Apple Sign-In Information</h4>
+      <p>When you sign in with Apple, we collect:</p>
+      <ul>
+        <li>Unique Apple User ID (required for accountability)</li>
+        <li>Email address (if you choose to share it)</li>
+        <li>Full name (if you choose to share it)</li>
+      </ul>
+
+      <h4>2.2 Chat Data</h4>
+      <p>We store:</p>
+      <ul>
+        <li>Chat sessions and message history (stored locally on your device)</li>
+        <li>For Premium users: encrypted chat history synced to cloud</li>
+        <li>Session timestamps and metadata</li>
+      </ul>
+
+      <h4>2.3 Usage Data</h4>
+      <p>We automatically collect:</p>
+      <ul>
+        <li>Device type and operating system version</li>
+        <li>App usage statistics</li>
+        <li>Firebase Analytics data (crashes, performance metrics)</li>
+      </ul>
+
+      <h4>2.4 Subscription & Payment Data</h4>
+      <p>If you subscribe to Premium:</p>
+      <ul>
+        <li>Subscription status and expiration date</li>
+        <li>Purchase history (processed by Apple, not stored by us)</li>
+      </ul>
+
+      <h3>3. Why We Collect This Data</h3>
+      
+      <h4>3.1 Legal Accountability</h4>
+      <div class="warning-box">
+        <p><strong>Important:</strong> We require authentication because AI conversations must be linked to verified identities. This protects our service and users from:</p>
+        <ul>
+          <li>Misuse of AI capabilities</li>
+          <li>Harmful or illegal content generation</li>
+          <li>Abuse and spam</li>
+          <li>Fraud and impersonation</li>
+        </ul>
+      </div>
+
+      <h4>3.2 Service Functionality</h4>
+      <ul>
+        <li>Sync your chats across devices (Premium)</li>
+        <li>Maintain your subscription status</li>
+        <li>Provide ad-free experience for Premium users</li>
+      </ul>
+
+      <h3>4. On-Device Processing</h3>
+      <div class="info-box">
+        <p><strong>Your AI conversations are processed entirely on your device using Apple's Foundation Models.</strong> Your prompts and responses are never sent to external AI servers. This ensures maximum privacy for your conversations.</p>
+      </div>
+
+      <h3>5. How We Store Your Data</h3>
+      <p>Your data is stored as follows:</p>
+      <ul>
+        <li>Chat history: Locally on your device (default)</li>
+        <li>Premium cloud sync: Google Firebase servers (United States)</li>
+        <li>User accounts: Google Firebase Firestore</li>
+        <li>Encryption: At rest and in transit</li>
+        <li>Retention: Until you delete your account</li>
+      </ul>
+
+      <h3>6. Data Sharing</h3>
+      <p><strong>We do NOT sell, rent, or share your personal data with third parties</strong>, except:</p>
+      <ul>
+        <li>Google Firebase (cloud hosting for Premium sync)</li>
+        <li>Google AdMob (advertising for free users)</li>
+        <li>Apple App Store (payment processing)</li>
+        <li>When required by law or court order</li>
+      </ul>
+
+      <h3>7. Your Rights</h3>
+      
+      <h4>7.1 Access Your Data</h4>
+      <p>Contact us to request a copy of your data.</p>
+
+      <h4>7.2 Delete Your Account</h4>
+      <div class="info-box">
+        <p><strong>Go to: Profile → Delete Account</strong></p>
+        <p>This permanently deletes:</p>
+        <ul>
+          <li>Your user profile</li>
+          <li>All cloud-synced chat history</li>
+          <li>Subscription data</li>
+          <li><strong>Cannot be undone</strong></li>
+        </ul>
+      </div>
+
+      <h4>7.3 Delete Local Chats</h4>
+      <p>Use the Cloud Options menu to delete all local chat history at any time.</p>
+
+      <h3>8. Security</h3>
+      <p>We implement industry-standard security measures:</p>
+      <ul>
+        <li>Encrypted data transmission (HTTPS/TLS)</li>
+        <li>Encrypted storage (Firebase encryption)</li>
+        <li>Authentication-required API access</li>
+        <li>On-device AI processing (no external servers)</li>
+      </ul>
+
+      <h3>9. Contact Us</h3>
+      <p>For privacy questions or to exercise your rights:</p>
+      <p><strong>Email:</strong> support@applegpt.app<br>
+      <strong>Developer:</strong> AppleGPT</p>
+    </div>
+
+    <div class="legal-section" id="terms">
+      <h2>Terms of Service</h2>
+      <p><em>Last Updated: January 8, 2026</em></p>
+
+      <div class="warning-box">
+        <p><strong>PLEASE READ THESE TERMS CAREFULLY BEFORE USING APPLEGPT.</strong></p>
+        <p>By downloading, installing, or using AppleGPT, you agree to be bound by these Terms of Service. If you do not agree, do not use the App.</p>
+      </div>
+
+      <h3>1. Acceptance of Terms</h3>
+      <p>These Terms constitute a legal agreement between you and AppleGPT. By using AppleGPT, you represent that:</p>
+      <ul>
+        <li>You are at least 13 years of age</li>
+        <li>You have the legal capacity to enter into this agreement</li>
+        <li>You will comply with all applicable laws</li>
+      </ul>
+
+      <h3>2. Account Requirements</h3>
+      
+      <h4>2.1 Mandatory Sign-In</h4>
+      <div class="warning-box">
+        <p><strong>AppleGPT requires Apple Sign-In for all users.</strong> This is necessary for:</p>
+        <ul>
+          <li><strong>Legal accountability:</strong> AI interactions must be linked to verified identities</li>
+          <li><strong>Safety:</strong> Prevent misuse of AI capabilities</li>
+          <li><strong>Compliance:</strong> Meet regulatory requirements for AI services</li>
+        </ul>
+      </div>
+
+      <h3>3. User Code of Conduct</h3>
+
+      <h4>3.1 Prohibited Use</h4>
+      <div class="danger-box">
+        <p><strong>You may NOT use AppleGPT to:</strong></p>
+        <ul>
+          <li>Generate harmful, illegal, or dangerous content</li>
+          <li>Attempt to bypass AI safety measures</li>
+          <li>Create content that promotes violence or hate</li>
+          <li>Generate spam, scams, or misleading information</li>
+          <li>Engage in any illegal activities</li>
+          <li>Harass, abuse, or harm others</li>
+        </ul>
+      </div>
+
+      <h3>4. AI-Generated Content</h3>
+      <p><strong>You understand that:</strong></p>
+      <ul>
+        <li>AI responses may not always be accurate or appropriate</li>
+        <li>You are responsible for how you use AI-generated content</li>
+        <li>AppleGPT does not guarantee the accuracy of any response</li>
+        <li>AI processing occurs on-device via Apple's Foundation Models</li>
+      </ul>
+
+      <h3>5. Premium Subscriptions</h3>
+      <p><strong>Free Tier:</strong> Full AI chat access, local storage, ads shown</p>
+      <p><strong>Premium Tier ($4.99/month):</strong> Ad-free experience, cloud sync across devices, priority support, early access to new features</p>
+
+      <h3>6. Account Deletion and Forfeitures</h3>
+      <div class="danger-box">
+        <p><strong>IMPORTANT: Deleting your account results in immediate and permanent forfeiture of:</strong></p>
+        <ul>
+          <li><strong>All Premium subscription benefits</strong> (no refunds for remaining time)</li>
+          <li><strong>All cloud-synced chat history</strong> (cannot be recovered)</li>
+          <li><strong>All local chat data</strong> (if not backed up)</li>
+        </ul>
+        <p><strong>Before deleting:</strong> Cancel subscription in App Store settings first.</p>
+      </div>
+
+      <h3>7. Limitation of Liability</h3>
+      <p>APPLEGPT IS PROVIDED "AS IS" WITHOUT WARRANTIES. WE SHALL NOT BE LIABLE FOR LOSS OF DATA, SERVICE INTERRUPTIONS, AI RESPONSE ACCURACY, OR ANY DAMAGES ARISING FROM YOUR USE OF THE APP.</p>
+
+      <h3>8. Apple Intelligence Requirements</h3>
+      <p>AppleGPT requires:</p>
+      <ul>
+        <li>iOS 26 or later</li>
+        <li>Compatible device with Apple Intelligence support</li>
+        <li>Apple Intelligence enabled in device settings</li>
+      </ul>
+      <p>Features may be limited or unavailable on unsupported devices.</p>
+
+      <h3>9. Contact Us</h3>
+      <p>Questions about these Terms:</p>
+      <p><strong>Email:</strong> support@applegpt.app<br>
+      <strong>Developer:</strong> AppleGPT</p>
+    </div>
+    
+    <footer>
+      AppleGPT
+    </footer>
+  </div>
+</body>
+</html>
